@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .menu a {
+        @apply text-gray-100 font-semibold text-lg uppercase mx-5 hover:text-gray-500 hover:underline transition-all duration-300;
+    }
+
+    .menuLateralItem {
+        @apply hover:text-gray-500 hover:transition-all duration-300;
+    }
+
+    .imagemMateria {
+        @apply mr-4 pl-6 pb-6;
+        width: 600px;
+		height: auto
+    }
+
+    .textoMateria {
+        @apply pt-8 pr-20;
+    }
+
+    .textoMateria h2{
+        @apply font-bold underline;
+    }
+
+    .textoMateria p{
+        @apply text-justify
+    }
+
+	.editorDraft-editor {
+		@apply border border-gray-700;
+	}
+	.editorDraft-toolbar {
+		@apply bg-gray-300;
+	}
+
+}
+
+.imgMateria{
+    width: 400px;
+    height: 200px;
+}
+
