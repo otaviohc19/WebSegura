@@ -16,7 +16,7 @@ export default function Home() {
 	}, []);
 
 	async function getGolpes(){
-		const resp = await axios.get("http://localhost:3306/golpes");
+		const resp = await axios.get("http://localhost:5173/golpes");
 		console.log(resp.data);
 		setGolpes(resp.data);
 	}

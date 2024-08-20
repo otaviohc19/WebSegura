@@ -21,7 +21,7 @@ export default function MenuLateral() {
                 <h3 className="font-bold underline">Fale Conosco</h3>
                 <a className="menuLateralItem" href="#">Contato<br /></a>
             </div>
-            <div className="flex-grow flex items-end">
+            <div className="flex-grow flex items-end absolute">
                 <img className="w-auto max-w-full" src="../../img/logo-no-background.png" />
             </div>
         </div>

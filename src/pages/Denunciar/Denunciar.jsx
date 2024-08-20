@@ -23,7 +23,7 @@ export default function Denunciar() {
 			tipo: tipo,
 			texto: draftToHtml(convertToRaw(texto.getCurrentContent()))
 		}
-		await axios.post("http://localhost:3000/denunciar", body);
+		await axios.post("http://localhost:5173/denunciar", body);
 		alert("ok");
 	}
 
