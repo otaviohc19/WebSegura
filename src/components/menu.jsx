@@ -5,7 +5,7 @@ export default function Menu() {
     return (
         <div className="bg-blue-950 p-3 flex justify-around items-center w-full">
             <div className="logo bg-white p-1 rounded-full flex justify-center items-center">
-                <a href="#"><img className="h-10" src="../../img/logo-no-background.png" alt="Logo" /></a>
+                <a href="/"><img className="h-10" src="../../img/logo-no-background.png" alt="Logo" /></a>
             </div>
 
             <div className="menu flex items-center space-x-6">

@@ -1,5 +1,3 @@
-// Home/Home.jsx
-
 import Menu from "../../components/menu";
 import MenuLateral from "../../components/menuLateral";
 import Footer from "../../components/footer";
@@ -8,18 +6,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Home() {
+    const [golpes, setGolpes] = useState([]);
 
-	const [golpes, setGolpes ] = useState ([]);
+    useEffect(() => {
+        getGolpes();
+    }, []);
 
-	useEffect(() => {
-		getGolpes();
-	}, []);
-
-	async function getGolpes(){
-		const resp = await axios.get("http://localhost:3000/golpes");
-		console.log(resp.data);
-		setGolpes(resp.data);
-	}	
+    async function getGolpes(){
+        const resp = await axios.get("http://localhost:3000/golpes");
+        setGolpes(resp.data);
+    }
 
     return (
         <div>
@@ -30,17 +26,17 @@ export default function Home() {
                 <h1 className="font-bold text-xl">Bem-vindo à Web Segura!</h1>
                 <h1 className="pb-4 font-bold text-xl">Leia mais:</h1>
 
-				<div className="flex-grow">
+                <div className="flex-grow">
 					{golpes.map(golpe => (
 						<MateriaMini
 							key={"golpe_" + golpe.idGolpes}
-							imagem = {"../../img/wpp.webp"}
+							imagem={golpe.imagem}
 							titulo={golpe.Titulo_golpes}
+							categoria={golpe.categoria}
 							texto={golpe.Descricao_golpes}
 						/>
 					))}
-				</div>
-
+                </div>
             </div>    
 
             <Footer />

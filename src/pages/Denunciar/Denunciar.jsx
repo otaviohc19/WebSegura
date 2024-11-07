@@ -9,82 +9,190 @@ import draftToHtml from 'draftjs-to-html';
 import axios from "axios";
 
 export default function Denunciar() {
-	const [titulo, setTitulo] = useState("");
-	const [tipo, setTipo] = useState("");
-	const [texto, setTexto] = useState(EditorState.createEmpty());
-	const [isMounted, setIsMounted] = useState(true); // Controle de montagem
+  const [titulo, setTitulo] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [categoria, setCategoria] = useState(""); // Categoria
+  const [categoriaId, setCategoriaId] = useState(""); // Estado para armazenar o ID da categoria
+  const [imagem, setImagem] = useState(null); // Estado para armazenar a imagem
+  const [texto, setTexto] = useState(EditorState.createEmpty());
+  const [isMounted, setIsMounted] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Estado para o carregamento
+  const [message, setMessage] = useState(""); // Mensagem de status
 
-	useEffect(() => {
-		setIsMounted(true);
-		return () => setIsMounted(false); // Limpa ao desmontar
-	}, []);
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
-	async function criaGolpe() {
-		const body = {
-			titulo: titulo,
-			tipo: tipo,
-			texto: draftToHtml(convertToRaw(texto.getCurrentContent()))
-		};
+  // Função para lidar com o upload da imagem
+  function handleImagemChange(event) {
+    setImagem(event.target.files[0]);
+  }
 
-		try {
-			const response = await axios.post("http://localhost:3000/denunciar", body);
-			if (isMounted) { // Verifica se o componente ainda está montado
-				alert(response.data.msg || "Denúncia feita com sucesso!");
-			}
-		} catch (error) {
-			console.error("Erro ao fazer a denúncia:", error);
-			if (isMounted) { // Verifica se o componente ainda está montado
-				alert("Ocorreu um erro ao fazer a denúncia. Tente novamente.");
-			}
-		}
-	}
+  const handleCategoriaChange = async (ev) => {
+    const categoriaNome = ev.target.value;
+    setCategoria(categoriaNome);
+  
+    if (categoriaNome) {
+      try {
+        // Fazer uma requisição ao backend para pegar o ID da categoria
+        const response = await fetch(`/categoria/${categoriaNome}`);
+        const data = await response.json();
+        
+        if (data.id) {
+          setCategoriaId(data.id); // Armazene o ID no estado
+        } else {
+          console.error('Categoria não encontrada');
+          setCategoriaId(""); // Limpar o ID se a categoria não for encontrada
+        }
+      } catch (error) {
+        console.error("Erro ao buscar categoria:", error);
+        setCategoriaId(""); // Limpar o ID em caso de erro
+      }
+    } else {
+      setCategoriaId(""); // Limpar o ID se não houver categoria selecionada
+    }
+  };
 
-	return (
-		<div>
-			<Menu />
-			<MenuLateral />
+  async function criaGolpe() {
+    if (!categoriaId) {
+      setMessage("Selecione uma categoria válida.");
+      return;
+    }
 
-			<div className="m-auto max-w-2xl my-8">
-				<h1 className="text-3xl font-bold text-center text-gray-800 mb-4">Faça aqui sua denúncia em nosso site!</h1>
-				<p className="text-lg text-gray-600">Ela ficará exposta para que os outros usuários possam ver e se precaverem.</p>
-			</div>
+    setIsLoading(true); // Começa o carregamento
+    const body = new FormData();
+    body.append("titulo", titulo);
+    body.append("tipo", tipo);
+    body.append("categoria", categoriaId); // Enviar o ID da categoria
+    body.append("texto", draftToHtml(convertToRaw(texto.getCurrentContent())));
 
-			<div className="container mx-auto">
-				<p>Título do golpe</p>
-				<input
-					className="border border-black"
-					type="text"
-					value={titulo}
-					onChange={(ev) => setTitulo(ev.target.value)}
-				/>
+    if (imagem) {
+      body.append("imagem", imagem); // Envia a imagem
+    }
 
-				<p>Tipo de golpe</p>
-				<input
-					className="border border-black"
-					type="text"
-					value={tipo}
-					onChange={(ev) => setTipo(ev.target.value)}
-				/>
+    try {
+      const response = await axios.post("http://localhost:3000/denunciar", body, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (isMounted) {
+        setMessage(response.data.msg || "Denúncia feita com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao fazer a denúncia:", error);
+      if (isMounted) {
+        setMessage("Ocorreu um erro ao fazer a denúncia. Tente novamente.");
+      }
+    } finally {
+      setIsLoading(false); // Fim do carregamento
+    }
+  }
 
-				<Editor
-					editorState={texto}
-					toolbarClassName="editorDraft-toolbar"
-					wrapperClassName="editorDraft-wrapper"
-					editorClassName="editorDraft-editor"
-					onEditorStateChange={setTexto}
-				/>
+  return (
+    <div className="flex flex-col h-screen pt-0">
+      {/* Menu do topo */}
+      <Menu />
 
-				<div className="mt-5">
-					<button onClick={criaGolpe} className="bg-white border-2 border-black p-3 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-100 hover:border-blue-500 hover:shadow-md transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500">
-						<i className="fas fa-user mr-2 text-black"></i> 
-						Fazer denúncia
-					</button>
-				</div>
+      {/* Conteúdo principal */}
+      <div className="flex flex-1 ml-16 mt-2 mb-10">
+        {/* Conteúdo à esquerda do menu lateral fixo */}
+        <div className="flex-1 p-8 overflow-auto max-w-4xl mx-auto"> {/* Adicionando max-w-4xl e mx-auto para centralizar o conteúdo */}
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">Faça aqui sua denúncia em nosso site!</h1>
+          <p className="text-lg text-gray-600 text-center mb-8">Ela ficará exposta para que os outros usuários possam ver e se precaverem.</p>
 
-				<div dangerouslySetInnerHTML={{ __html: draftToHtml(convertToRaw(texto.getCurrentContent())) }} />
-			</div>
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            {/* Título do Golpe */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="titulo" className="block text-lg font-medium text-gray-700">Título do Golpe</label>
+                <input
+                  id="titulo"
+                  type="text"
+                  value={titulo}
+                  onChange={(ev) => setTitulo(ev.target.value)}
+                  className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-2"
+                />
+              </div>
 
-			<Footer />
-		</div>
-	);
+              {/* Tipo de Golpe */}
+              <div>
+                <label htmlFor="tipo" className="block text-lg font-medium text-gray-700">Tipo de Golpe</label>
+                <input
+                  id="tipo"
+                  type="text"
+                  value={tipo}
+                  onChange={(ev) => setTipo(ev.target.value)}
+                  className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-2"
+                />
+              </div>
+            </div>
+
+            {/* Categoria do Golpe */}
+            <div>
+              <label htmlFor="categoria" className="block text-lg font-medium text-gray-700">Categoria do Golpe</label>
+              <select
+                id="categoria"
+                value={categoria}
+                onChange={handleCategoriaChange}
+                className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-2"
+              >
+                <option value="">Selecione uma categoria</option>
+                <option value="Phishing">Phishing</option>
+                <option value="Roubo de Identidade">Roubo de Identidade</option>
+                <option value="Fraude Financeira">Fraude Financeira</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+
+            {/* Escolher Imagem */}
+            <div>
+              <label htmlFor="imagem" className="block text-lg font-medium text-gray-700">Escolha uma imagem para o golpe</label>
+              <input
+                type="file"
+                onChange={handleImagemChange}
+                className="mt-2 block w-full text-sm text-gray-700"
+              />
+            </div>
+
+            {/* Editor de Texto */}
+            <div>
+              <label htmlFor="texto" className="block text-lg font-medium text-gray-700">Descrição do Golpe</label>
+              <Editor
+                editorState={texto}
+                toolbarClassName="editorDraft-toolbar"
+                wrapperClassName="editorDraft-wrapper"
+                editorClassName="editorDraft-editor"
+                onEditorStateChange={setTexto}
+              />
+            </div>
+
+            {/* Mensagem de status */}
+            {message && (
+              <div className="text-center text-lg text-gray-800 mt-4">
+                <p>{message}</p>
+              </div>
+            )}
+
+            {/* Botão de Envio */}
+            <div className="mt-5">
+              <button
+                onClick={criaGolpe}
+                disabled={isLoading}
+                className="w-full py-3 bg-blue-600 text-white text-lg rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+              >
+                {isLoading ? "Enviando..." : "Fazer denúncia"}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Menu Lateral Fixado à Direita */}
+        <MenuLateral />
+      </div>
+
+      <Footer />
+    </div>
+  );
 }
