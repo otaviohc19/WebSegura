@@ -4,20 +4,20 @@ export default function MenuLateral() {
         <div>
           <div>
             <h3 className="font-bold underline">Em Alta</h3>
-            <a className="menuLateralItem" href="#">Banco<br /></a>
-            <a className="menuLateralItem" href="#">WhatsApp<br /></a>
-            <a className="menuLateralItem" href="#">Redes Sociais<br /></a>
-            <a className="menuLateralItem" href="#">Vendas Online<br /></a>
+            <a className="menuLateralItem" href="/golpes">Banco<br /></a>
+            <a className="menuLateralItem" href="/golpes">WhatsApp<br /></a>
+            <a className="menuLateralItem" href="/golpes">Redes Sociais<br /></a>
+            <a className="menuLateralItem" href="/golpes">Vendas Online<br /></a>
           </div>
           <div className="pt-5">
             <h3 className="font-bold underline">Mais Acessados</h3>
-            <a className="menuLateralItem" href="#">Ransomware<br /></a>
-            <a className="menuLateralItem" href="#">Phishing<br /></a>
-            <a className="menuLateralItem" href="#">Engenharia Social<br /></a>
+            <a className="menuLateralItem" href="/golpes">Ransomware<br /></a>
+            <a className="menuLateralItem" href="/golpes">Phishing<br /></a>
+            <a className="menuLateralItem" href="/golpes">Engenharia Social<br /></a>
           </div>
           <div className="pt-5">
             <h3 className="font-bold underline">Fale Conosco</h3>
-            <a className="menuLateralItem" href="#">Contato<br /></a>
+            <a className="menuLateralItem" href="/contato">Contato<br /></a>
           </div>
         </div>
         <div className="mt-auto flex justify-center">

@@ -99,7 +99,7 @@ export default function Denunciar() {
       <div className="flex flex-1 overflow-y-auto">
         <div className="flex-1 p-8 max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">Faça aqui sua denúncia em nosso site!</h1>
-          <p className="text-lg text-gray-600 text-center mb-8">Ela ficará exposta para que os outros usuários possam ver e se precaverem.</p>
+          <p className="text-lg text-gray-600 text-center mb-8">Ela ficará exposta no fórum para que outros usuários possam interagir e se ajudarem.</p>
   
           <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
             {/* Título do Golpe */}

@@ -6,7 +6,7 @@ import Contato from "./pages/Contato/Contato";
 import Login from './pages/Login/Login';
 import CriarConta from './pages/CriarConta/CriaConta';
 import Denunciar from './pages/Denunciar/Denunciar';
-import Golpes from "./pages/Golpes/Golpes";
+import Golpes from './pages/Golpes/golpes';
 import Forum from "./pages/Forum/Forum";
 
 function App() {

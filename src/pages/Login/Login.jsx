@@ -34,7 +34,10 @@ export default function Login() {
                     </a>
                 </div>
             </div>
-            <Footer />
+            <div className="fixed bottom-0 left-0 w-full">
+                <Footer />
+            </div>
+
         </div>
     )
 }
