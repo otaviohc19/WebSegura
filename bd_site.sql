@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 27/10/2024 às 23:04
--- Versão do servidor: 10.4.28-MariaDB
--- Versão do PHP: 8.2.4
+-- Tempo de geração: 07/11/2024 às 21:44
+-- Versão do servidor: 10.4.32-MariaDB
+-- Versão do PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -67,8 +67,9 @@ CREATE TABLE `categorias` (
 
 INSERT INTO `categorias` (`id`, `nome`) VALUES
 (1, 'Phishing'),
-(2, 'Esquemas de pirâmide'),
-(3, 'Falsificação');
+(2, 'Roubo de Identidade'),
+(3, 'Fraude Financeira'),
+(4, 'Outros');
 
 -- --------------------------------------------------------
 
@@ -158,7 +159,8 @@ CREATE TABLE `golpes` (
   `Metodo_golpes` varchar(255) DEFAULT NULL,
   `URL_golpes` varchar(255) DEFAULT NULL,
   `Data_golpes` date DEFAULT NULL,
-  `Status_golpes` varchar(255) DEFAULT NULL
+  `Status_golpes` varchar(255) DEFAULT NULL,
+  `imagem` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -298,7 +300,7 @@ ALTER TABLE `alvos`
 -- AUTO_INCREMENT de tabela `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `comentarios`
@@ -328,7 +330,7 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT de tabela `golpes`
 --
 ALTER TABLE `golpes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `localizacao`

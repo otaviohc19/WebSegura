@@ -91,17 +91,16 @@ export default function Denunciar() {
   }
 
   return (
-    <div className="flex flex-col h-screen pt-0">
+    <div className="flex flex-col min-h-screen">
       {/* Menu do topo */}
       <Menu />
-
-      {/* Conteúdo principal */}
-      <div className="flex flex-1 ml-16 mt-2 mb-10">
-        {/* Conteúdo à esquerda do menu lateral fixo */}
-        <div className="flex-1 p-8 overflow-auto max-w-4xl mx-auto"> {/* Adicionando max-w-4xl e mx-auto para centralizar o conteúdo */}
+  
+      {/* Conteúdo principal com rolagem interna */}
+      <div className="flex flex-1 overflow-y-auto">
+        <div className="flex-1 p-8 max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">Faça aqui sua denúncia em nosso site!</h1>
           <p className="text-lg text-gray-600 text-center mb-8">Ela ficará exposta para que os outros usuários possam ver e se precaverem.</p>
-
+  
           <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
             {/* Título do Golpe */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -115,7 +114,7 @@ export default function Denunciar() {
                   className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-2"
                 />
               </div>
-
+  
               {/* Tipo de Golpe */}
               <div>
                 <label htmlFor="tipo" className="block text-lg font-medium text-gray-700">Tipo de Golpe</label>
@@ -128,7 +127,7 @@ export default function Denunciar() {
                 />
               </div>
             </div>
-
+  
             {/* Categoria do Golpe */}
             <div>
               <label htmlFor="categoria" className="block text-lg font-medium text-gray-700">Categoria do Golpe</label>
@@ -145,7 +144,7 @@ export default function Denunciar() {
                 <option value="Outros">Outros</option>
               </select>
             </div>
-
+  
             {/* Escolher Imagem */}
             <div>
               <label htmlFor="imagem" className="block text-lg font-medium text-gray-700">Escolha uma imagem para o golpe</label>
@@ -155,7 +154,7 @@ export default function Denunciar() {
                 className="mt-2 block w-full text-sm text-gray-700"
               />
             </div>
-
+  
             {/* Editor de Texto */}
             <div>
               <label htmlFor="texto" className="block text-lg font-medium text-gray-700">Descrição do Golpe</label>
@@ -163,18 +162,18 @@ export default function Denunciar() {
                 editorState={texto}
                 toolbarClassName="editorDraft-toolbar"
                 wrapperClassName="editorDraft-wrapper"
-                editorClassName="editorDraft-editor"
+                editorClassName="editorDraft-editor h-48 max-h-96 overflow-auto p-4 border border-gray-300 rounded-md"
                 onEditorStateChange={setTexto}
               />
             </div>
-
+  
             {/* Mensagem de status */}
             {message && (
               <div className="text-center text-lg text-gray-800 mt-4">
                 <p>{message}</p>
               </div>
             )}
-
+  
             {/* Botão de Envio */}
             <div className="mt-5">
               <button
@@ -187,12 +186,13 @@ export default function Denunciar() {
             </div>
           </form>
         </div>
-
+  
         {/* Menu Lateral Fixado à Direita */}
         <MenuLateral />
       </div>
-
+  
+      {/* Rodapé posicionado abaixo do conteúdo */}
       <Footer />
     </div>
   );
-}
+} 

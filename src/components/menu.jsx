@@ -15,9 +15,6 @@ export default function Menu() {
                 <a className="menuItem text-white transition duration-300 ease-in-out hover:text-blue-500 hover:underline focus:outline-none focus:text-blue-600" href="/golpes">
                     Golpes
                 </a>
-                <a className="menuItem text-white transition duration-300 ease-in-out hover:text-blue-500 hover:underline focus:outline-none focus:text-blue-600" href="/prevencao">
-                    Prevenção
-                </a>
                 <a className="menuItem text-white transition duration-300 ease-in-out hover:text-blue-500 hover:underline focus:outline-none focus:text-blue-600" href="/forum">
                     Forum
                 </a>
