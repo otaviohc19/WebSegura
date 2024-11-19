@@ -21,7 +21,7 @@ export default function MenuLateral() {
           </div>
         </div>
         <div className="mt-auto flex justify-center">
-          <img className="w-auto max-w-full bg-white p-1 rounded-full" src="../../img/logo-no-background.png" />
+          <img className="w-auto max-w-full bg-white p-1 rounded-full" src="../../img/logo-icon-clip.png" />
         </div>
       </div>
 

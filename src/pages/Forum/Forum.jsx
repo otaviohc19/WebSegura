@@ -34,9 +34,9 @@ export default function Forum() {
                     {golpes.map(golpe => (
                         <MateriaMini
                             key={golpe.id}
-                            imagem={golpe.imagem} // Caminho para a imagem do golpe
+                            imagem={golpe.imagem}
                             titulo={golpe.titulo}
-                            categoria={golpe.categoria_id} // Exibindo o ID da categoria, ou faça outra consulta para exibir o nome
+                            categoria={golpe.categoria_id} 
                             texto={golpe.descricao}
                         />
                     ))}

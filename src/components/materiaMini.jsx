@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function MateriaMini({ imagem, titulo, categoria, texto }) {
   // Defina uma imagem padrão caso não tenha imagem fornecida
-  const imagemDefault = '/uploads/placeholder.jpg';
+  const imagemDefault = 'img/redes.webp';
 
   return (
     <div className="materia-mini">
