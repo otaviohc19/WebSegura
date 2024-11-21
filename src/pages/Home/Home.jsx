@@ -7,6 +7,7 @@ export default function Home() {
     const noticias = [
         {
             id: 1,
+            link: "phishing",
             imagem: "../img/phishing.jpg",
             titulo: "Entenda o Phishing e Como Evitar",
             categoria: "Golpes Digitais",
@@ -14,6 +15,7 @@ export default function Home() {
         },
         {
             id: 2,
+            link: "golpes-bancarios",
             imagem: "../img/img4.jpg",
             titulo: "Golpes Bancários: Proteja-se!",
             categoria: "Golpes Bancários",
@@ -21,6 +23,7 @@ export default function Home() {
         },
         {
             id: 3,
+            link: "fraude-redes-sociais",
             imagem: "../img/wpp.webp",
             titulo: "Fraude em Redes Sociais",
             categoria: "Engenharia Social",
@@ -28,6 +31,7 @@ export default function Home() {
         },
         {
             id: 4,
+            link: "sites-falsos-compras",
             imagem: "../img/redes.webp",
             titulo: "Sites Falsos de Compras Online",
             categoria: "Golpes de E-commerce",
@@ -35,6 +39,7 @@ export default function Home() {
         },
         {
             id: 5,
+            link: "clonagem-cartoes",
             imagem: "../img/img1.jpg",
             titulo: "Clonagem de Cartões: Como se Proteger",
             categoria: "Golpes Financeiros",
@@ -42,6 +47,7 @@ export default function Home() {
         },
         {
             id: 6,
+            link: "trojan",
             imagem: "../img/trojan.png",
             titulo: "Vírus Trojan: O Cavalo de Troia Digital",
             categoria: "Malware",
@@ -49,6 +55,7 @@ export default function Home() {
         },
         {
             id: 7,
+            link: "ransomware",
             imagem: "../img/ransonware.jpeg",
             titulo: "Ransomware: O Vírus que Faz Sequestrar Seus Dados",
             categoria: "Malware",
@@ -56,6 +63,7 @@ export default function Home() {
         },
         {
             id: 8,
+            link: "worm",
             imagem: "../img/worm.webp",
             titulo: "Worms: Vírus que Se Propagam Sozinhos",
             categoria: "Malware",
@@ -69,9 +77,11 @@ export default function Home() {
             <MenuLateral />
             <div className="max-w-7xl mx-auto p-6">
             <div className="space-y-6">
+                <h1 className="text-2xl"><strong>Bem-vindo à Web Segura!</strong></h1>
+                <h1 className="text-2xl"><strong>Leia mais:</strong></h1>
                 {noticias.map((noticia) => (
-                    <Link to={`/noticia/${noticia.id}`} key={noticia.id}>
-                        <div className="border p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-2xl">
+                    <Link to={`/noticias/${noticia.link}`} key={noticia.id}>
+                        <div className="border p-6 rounded-lg shadow-lg max-w-5xl">
                             <img 
                                 src={noticia.imagem} 
                                 alt={noticia.titulo} 

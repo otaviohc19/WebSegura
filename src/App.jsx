@@ -9,6 +9,13 @@ import Denunciar from './pages/Denunciar/Denunciar';
 import Golpes from './pages/Golpes/golpes';
 import Forum from "./pages/Forum/Forum";
 import Phishing from './pages/Noticias/Phishing';
+import ClonagemCartoes from './pages/Noticias/ClonagemCartoes';
+import FraudeRedesSociais from './pages/Noticias/FraudeRedesSociais';
+import GolpesBancarios from './pages/Noticias/GolpesBancarios';
+import Ransomware from './pages/Noticias/Ransomware';
+import SitesFalsosCompras from './pages/Noticias/SitesFalsosCompras';
+import Trojan from './pages/Noticias/Trojan';
+import Worm from './pages/Noticias/Worm';
 
 
 function App() {
@@ -24,14 +31,14 @@ function App() {
           <Route path='/criarconta' element={<CriarConta />} />
           <Route path='/golpes' element={<Golpes />} />
           <Route path='/forum' element={<Forum />} />
+          <Route path="/noticias/fraude-redes-sociais" element={<FraudeRedesSociais />} />
+          <Route path="/noticias/golpes-bancarios" element={<GolpesBancarios />} />
+          <Route path="/noticias/phishing" element={<Phishing />} />
+          <Route path="/noticias/ransomware" element={<Ransomware />} />
+          <Route path="/noticias/sites-falsos-compras" element={<SitesFalsosCompras />} />
+          <Route path="/noticias/worm" element={<Worm />} />
+          <Route path='/noticias/trojan' element={<Trojan />} />
           <Route path="/noticias/clonagem-cartoes" element={<ClonagemCartoes />} />
-          <Route path="/noticia/fraude-redes-sociais" element={<FraudeRedesSociais />} />
-          <Route path="/noticia/golpes-bancarios" element={<GolpesBancarios />} />
-          <Route path="/noticia/phishing" element={<Phishing />} />
-          <Route path="/noticia/ransomware" element={<Ransomware />} />
-          <Route path="/noticia/sites-falsos-compras" element={<SitesFalsosCompras />} />
-          <Route path="/noticia/worm" element={<Worm />} />
-
         </Routes>
       </BrowserRouter>
     </>
