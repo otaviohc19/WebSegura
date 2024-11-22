@@ -18,10 +18,26 @@ export default function Denunciar() {
   const [isMounted, setIsMounted] = useState(true);
   const [isLoading, setIsLoading] = useState(false); // Estado para o carregamento
   const [message, setMessage] = useState(""); // Mensagem de status
+  const [categorias, setCategorias] = useState([]); // Estado para armazenar as categorias
 
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
+  }, []);
+
+  // Função para buscar as categorias do backend
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/categorias');
+        const data = await response.json();
+        setCategorias(data);
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+      }
+    };
+
+    fetchCategorias();
   }, []);
 
   // Função para lidar com o upload da imagem
@@ -29,28 +45,16 @@ export default function Denunciar() {
     setImagem(event.target.files[0]);
   }
 
-  const handleCategoriaChange = async (ev) => {
+  const handleCategoriaChange = (ev) => {
     const categoriaNome = ev.target.value;
     setCategoria(categoriaNome);
-  
-    if (categoriaNome) {
-      try {
-        // Fazer uma requisição ao backend para pegar o ID da categoria
-        const response = await fetch(`/categoria/${categoriaNome}`);
-        const data = await response.json();
-        
-        if (data.id) {
-          setCategoriaId(data.id); // Armazene o ID no estado
-        } else {
-          console.error('Categoria não encontrada');
-          setCategoriaId(""); // Limpar o ID se a categoria não for encontrada
-        }
-      } catch (error) {
-        console.error("Erro ao buscar categoria:", error);
-        setCategoriaId(""); // Limpar o ID em caso de erro
-      }
+
+    // Encontrar o ID da categoria
+    const categoriaSelecionada = categorias.find(c => c.nome === categoriaNome);
+    if (categoriaSelecionada) {
+      setCategoriaId(categoriaSelecionada.id); // Armazenar o ID da categoria
     } else {
-      setCategoriaId(""); // Limpar o ID se não houver categoria selecionada
+      setCategoriaId(""); // Limpar o ID se a categoria não for encontrada
     }
   };
 
@@ -79,6 +83,7 @@ export default function Denunciar() {
       });
       if (isMounted) {
         setMessage(response.data.msg || "Denúncia feita com sucesso!");
+        console.log("Denúncia enviada");
       }
     } catch (error) {
       console.error("Erro ao fazer a denúncia:", error);
@@ -94,13 +99,13 @@ export default function Denunciar() {
     <div className="flex flex-col min-h-screen">
       {/* Menu do topo */}
       <Menu />
-  
+
       {/* Conteúdo principal com rolagem interna */}
       <div className="flex flex-1 overflow-y-auto">
         <div className="flex-1 p-8 max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">Faça aqui sua denúncia em nosso site!</h1>
           <p className="text-lg text-gray-600 text-center mb-8">Ela ficará exposta no fórum para que outros usuários possam interagir e se ajudarem.</p>
-  
+
           <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
             {/* Título do Golpe */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -114,7 +119,7 @@ export default function Denunciar() {
                   className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-2"
                 />
               </div>
-  
+
               {/* Tipo de Golpe */}
               <div>
                 <label htmlFor="tipo" className="block text-lg font-medium text-gray-700">Tipo de Golpe</label>
@@ -127,7 +132,7 @@ export default function Denunciar() {
                 />
               </div>
             </div>
-  
+
             {/* Categoria do Golpe */}
             <div>
               <label htmlFor="categoria" className="block text-lg font-medium text-gray-700">Categoria do Golpe</label>
@@ -138,13 +143,14 @@ export default function Denunciar() {
                 className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-2"
               >
                 <option value="">Selecione uma categoria</option>
-                <option value="Phishing">Phishing</option>
-                <option value="Roubo de Identidade">Roubo de Identidade</option>
-                <option value="Fraude Financeira">Fraude Financeira</option>
-                <option value="Outros">Outros</option>
+                {categorias.map((cat) => (
+                  <option key={cat.id} value={cat.nome}>
+                    {cat.nome}
+                  </option>
+                ))}
               </select>
             </div>
-  
+
             {/* Escolher Imagem */}
             <div>
               <label htmlFor="imagem" className="block text-lg font-medium text-gray-700">Escolha uma imagem para o golpe</label>
@@ -154,7 +160,7 @@ export default function Denunciar() {
                 className="mt-2 block w-full text-sm text-gray-700"
               />
             </div>
-  
+
             {/* Editor de Texto */}
             <div>
               <label htmlFor="texto" className="block text-lg font-medium text-gray-700">Descrição do Golpe</label>
@@ -166,14 +172,14 @@ export default function Denunciar() {
                 onEditorStateChange={setTexto}
               />
             </div>
-  
+
             {/* Mensagem de status */}
             {message && (
               <div className="text-center text-lg text-gray-800 mt-4">
                 <p>{message}</p>
               </div>
             )}
-  
+
             {/* Botão de Envio */}
             <div className="mt-5">
               <button
@@ -186,13 +192,13 @@ export default function Denunciar() {
             </div>
           </form>
         </div>
-  
+
         {/* Menu Lateral Fixado à Direita */}
         <MenuLateral />
       </div>
-  
+
       {/* Rodapé posicionado abaixo do conteúdo */}
       <Footer />
     </div>
   );
-} 
+}

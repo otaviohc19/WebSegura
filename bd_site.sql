@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 07/11/2024 às 21:44
+-- Tempo de geração: 22/11/2024 às 19:07
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -20,35 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `bd_site`
 --
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `acoes_tomadas`
---
-
-CREATE TABLE `acoes_tomadas` (
-  `id` int(11) NOT NULL,
-  `descricao` varchar(255) NOT NULL COMMENT 'Descrição da Ação Tomada (por exemplo, alerta aos usuários, encerramento do site de golpe)',
-  `data_hora` datetime NOT NULL,
-  `golpe_id` int(11) NOT NULL,
-  `usuario_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `alvos`
---
-
-CREATE TABLE `alvos` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(45) NOT NULL,
-  `email` varchar(45) NOT NULL,
-  `telefone` varchar(15) NOT NULL,
-  `outras_informacoes` varchar(255) DEFAULT NULL,
-  `golpe_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -110,35 +81,6 @@ INSERT INTO `contatos` (`id`, `nome`, `email`, `telefone`, `outras_informacoes`)
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `evidencias`
---
-
-CREATE TABLE `evidencias` (
-  `id` int(11) NOT NULL,
-  `descricao` text NOT NULL,
-  `data_hora` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Data e Hora da Submissão da Evidência',
-  `status_verificacao` enum('verificado','não verificado') NOT NULL,
-  `golpe_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `feedback`
---
-
-CREATE TABLE `feedback` (
-  `id` int(11) NOT NULL,
-  `classificacao` varchar(45) NOT NULL,
-  `comentario` varchar(255) NOT NULL,
-  `data_hora` datetime NOT NULL,
-  `golpe_id` int(11) NOT NULL,
-  `usuario_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estrutura para tabela `golpes`
 --
 
@@ -153,30 +95,17 @@ CREATE TABLE `golpes` (
   `usuario_id` int(11) NOT NULL,
   `categoria_id` int(11) NOT NULL,
   `contato_id` int(11) NOT NULL,
-  `Titulo_golpes` varchar(255) DEFAULT NULL,
-  `Conteudo_golpes` text DEFAULT NULL,
-  `Descricao_golpes` text DEFAULT NULL,
-  `Metodo_golpes` varchar(255) DEFAULT NULL,
-  `URL_golpes` varchar(255) DEFAULT NULL,
-  `Data_golpes` date DEFAULT NULL,
-  `Status_golpes` varchar(255) DEFAULT NULL,
   `imagem` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- --------------------------------------------------------
-
 --
--- Estrutura para tabela `localizacao`
+-- Despejando dados para a tabela `golpes`
 --
 
-CREATE TABLE `localizacao` (
-  `id` int(11) NOT NULL,
-  `pais` varchar(45) NOT NULL,
-  `estado` varchar(45) NOT NULL,
-  `cidade` varchar(45) NOT NULL,
-  `cep` varchar(10) NOT NULL,
-  `golpe_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+INSERT INTO `golpes` (`id`, `titulo`, `descricao`, `metodo`, `url`, `data`, `status`, `usuario_id`, `categoria_id`, `contato_id`, `imagem`) VALUES
+(16, 'oba', '<p>abcdrfg</p>\r\n', 'oi', 'google.com', '2024-11-22', 'em análise', 1, 2, 1, '/uploads/1732292643831.png'),
+(17, 'joia', '<p>asasdaq</p>\r\n', 'bom dia', 'google.com', '2024-11-22', 'em análise', 1, 2, 1, '/uploads/1732292748594.png'),
+(18, 'carro', '<p>caminhonete</p>\r\n', 'moto', 'google.com', '2024-11-22', 'em análise', 1, 1, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -206,22 +135,6 @@ INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha`, `acesso`) VALUES
 --
 
 --
--- Índices de tabela `acoes_tomadas`
---
-ALTER TABLE `acoes_tomadas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_acoes_tomadas_golpe` (`golpe_id`),
-  ADD KEY `fk_acoes_tomadas_usuario` (`usuario_id`);
-
---
--- Índices de tabela `alvos`
---
-ALTER TABLE `alvos`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `fk_alvos_golpe` (`golpe_id`);
-
---
 -- Índices de tabela `categorias`
 --
 ALTER TABLE `categorias`
@@ -243,21 +156,6 @@ ALTER TABLE `contatos`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Índices de tabela `evidencias`
---
-ALTER TABLE `evidencias`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_evidencias_golpe` (`golpe_id`);
-
---
--- Índices de tabela `feedback`
---
-ALTER TABLE `feedback`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_feedback_golpe` (`golpe_id`),
-  ADD KEY `fk_feedback_usuario` (`usuario_id`);
-
---
 -- Índices de tabela `golpes`
 --
 ALTER TABLE `golpes`
@@ -265,13 +163,6 @@ ALTER TABLE `golpes`
   ADD KEY `fk_golpes_usuario` (`usuario_id`),
   ADD KEY `fk_golpes_categoria` (`categoria_id`),
   ADD KEY `fk_golpes_contato` (`contato_id`);
-
---
--- Índices de tabela `localizacao`
---
-ALTER TABLE `localizacao`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_localizacao_golpe` (`golpe_id`);
 
 --
 -- Índices de tabela `usuarios`
@@ -283,18 +174,6 @@ ALTER TABLE `usuarios`
 --
 -- AUTO_INCREMENT para tabelas despejadas
 --
-
---
--- AUTO_INCREMENT de tabela `acoes_tomadas`
---
-ALTER TABLE `acoes_tomadas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `alvos`
---
-ALTER TABLE `alvos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `categorias`
@@ -315,28 +194,10 @@ ALTER TABLE `contatos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de tabela `evidencias`
---
-ALTER TABLE `evidencias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `feedback`
---
-ALTER TABLE `feedback`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de tabela `golpes`
 --
 ALTER TABLE `golpes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- AUTO_INCREMENT de tabela `localizacao`
---
-ALTER TABLE `localizacao`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`
@@ -349,37 +210,11 @@ ALTER TABLE `usuarios`
 --
 
 --
--- Restrições para tabelas `acoes_tomadas`
---
-ALTER TABLE `acoes_tomadas`
-  ADD CONSTRAINT `fk_acoes_tomadas_golpe` FOREIGN KEY (`golpe_id`) REFERENCES `golpes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_acoes_tomadas_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Restrições para tabelas `alvos`
---
-ALTER TABLE `alvos`
-  ADD CONSTRAINT `fk_alvos_golpe` FOREIGN KEY (`golpe_id`) REFERENCES `golpes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
 -- Restrições para tabelas `comentarios`
 --
 ALTER TABLE `comentarios`
   ADD CONSTRAINT `fk_comentarios_golpe` FOREIGN KEY (`golpe_id`) REFERENCES `golpes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_comentarios_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Restrições para tabelas `evidencias`
---
-ALTER TABLE `evidencias`
-  ADD CONSTRAINT `fk_evidencias_golpe` FOREIGN KEY (`golpe_id`) REFERENCES `golpes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Restrições para tabelas `feedback`
---
-ALTER TABLE `feedback`
-  ADD CONSTRAINT `fk_feedback_golpe` FOREIGN KEY (`golpe_id`) REFERENCES `golpes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_feedback_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Restrições para tabelas `golpes`
@@ -388,12 +223,6 @@ ALTER TABLE `golpes`
   ADD CONSTRAINT `fk_golpes_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_golpes_contato` FOREIGN KEY (`contato_id`) REFERENCES `contatos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_golpes_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Restrições para tabelas `localizacao`
---
-ALTER TABLE `localizacao`
-  ADD CONSTRAINT `fk_localizacao_golpe` FOREIGN KEY (`golpe_id`) REFERENCES `golpes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

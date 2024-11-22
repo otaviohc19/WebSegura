@@ -57,28 +57,46 @@ export default function Phishing() {
                 <h1 className="text-3xl font-bold mb-4">{noticia.titulo}</h1>
                 <p className="text-gray-500 mb-6">{noticia.categoria}</p>
                 <div className="prose lg:prose-xl">
-                    <h2>O que é o Phishing?</h2>
-                    <p>{noticia.texto.split('**O que é o Phishing?**')[1].split('**Como Funciona o Phishing?**')[0]}</p>
+                    <h2 className="font-bold">O que é o Phishing?</h2>
+                    <p>
+                        O phishing é uma técnica de ataque cibernético em que criminosos enganam as vítimas para obter informações confidenciais, como senhas, números de cartão de crédito ou dados pessoais. Eles se passam por entidades confiáveis, como bancos ou empresas, e utilizam comunicações fraudulentas para induzir a vítima a compartilhar essas informações.
+                    </p>
+                    <br />
+                    <h2 className="font-bold">Como Funciona o Phishing?</h2>
+                    <p>
+                        O phishing funciona explorando a confiança ou a falta de atenção das vítimas. O criminoso cria um cenário falso, como um e-mail de um banco solicitando a atualização de dados, e redireciona a vítima para um site falso que se parece com o original. Ao inserir as informações no site, a vítima entrega seus dados aos golpistas.
+                    </p>
                     
-                    <h2>Como Funciona o Phishing?</h2>
-                    <p>{noticia.texto.split('**Como Funciona o Phishing?**')[1].split('**Principais Tipos de Phishing**')[0]}</p>
-                    
-                    <h3>1. Engano Inicial</h3>
-                    <p>Explicação do engano inicial...</p>
-                    <h3>2. Redirecionamento para Sites Falsos</h3>
-                    <p>Explicação sobre como os sites falsos funcionam...</p>
-                    <h3>3. Roubo de Dados e Consequências</h3>
-                    <p>Consequências do phishing...</p>
-
-                    <h2>Principais Tipos de Phishing</h2>
+                    <h3 className="font-bold">1. Engano Inicial</h3>
+                    <p>
+                        Os golpistas enviam mensagens que parecem legítimas, como e-mails ou SMS, contendo alertas urgentes ou promoções irresistíveis. O objetivo é atrair a atenção da vítima e incentivá-la a agir rapidamente, sem perceber os sinais de fraude.
+                    </p>
+                    <h3 className="font-bold">2. Redirecionamento para Sites Falsos</h3>
+                    <p>
+                        As mensagens geralmente contêm links que redirecionam a vítima para sites falsos. Esses sites são projetados para se parecer com plataformas confiáveis, como portais bancários ou lojas online, enganando a vítima para que insira suas informações.
+                    </p>
+                    <h3 className="font-bold">3. Roubo de Dados e Consequências</h3>
+                    <p>
+                        Assim que a vítima insere os dados no site falso, os golpistas têm acesso às informações. Isso pode resultar em roubo de identidade, transações financeiras fraudulentas e outros prejuízos significativos.
+                    </p>
+                    <br />
+                    <h2 className="font-bold">Principais Tipos de Phishing</h2>
                     <ul className="list-disc pl-5">
-                        <li><strong>Phishing por E-mail:</strong> Descrição...</li>
-                        <li><strong>Spear Phishing:</strong> Descrição...</li>
-                        <li><strong>Smishing:</strong> Descrição...</li>
-                        <li><strong>Phishing em Redes Sociais:</strong> Descrição...</li>
+                        <li>
+                            <strong>Phishing por E-mail:</strong> Envolve o envio de e-mails que parecem vir de fontes confiáveis, contendo links ou anexos maliciosos.
+                        </li>
+                        <li>
+                            <strong>Spear Phishing:</strong> Ataques direcionados a indivíduos ou empresas específicas, geralmente com informações personalizadas para parecer mais convincentes.
+                        </li>
+                        <li>
+                            <strong>Smishing:</strong> Golpes realizados por SMS, onde os golpistas enviam mensagens com links para sites falsos ou números de telefone fraudulentos.
+                        </li>
+                        <li>
+                            <strong>Phishing em Redes Sociais:</strong> Os criminosos criam perfis falsos ou enviam mensagens diretas para enganar as vítimas.
+                        </li>
                     </ul>
-
-                    <h2>Como se Proteger do Phishing</h2>
+                    <br />
+                    <h2 className="font-bold">Como se Proteger do Phishing</h2>
                     <ol className="list-decimal pl-5">
                         <li>Desconfie de Mensagens Não Solicitadas</li>
                         <li>Verifique o Endereço do Site</li>
@@ -87,11 +105,14 @@ export default function Phishing() {
                         <li>Mantenha seu Software Atualizado</li>
                         <li>Desconfie de Ofertas de Prêmios ou Benefícios Irresistíveis</li>
                     </ol>
-                    <h2>Conclusão</h2>
-                    <p>{noticia.texto.split('**Conclusão**')[1]}</p>
+                    <br />
+                    <h2 className="font-bold">Conclusão</h2>
+                    <p>
+                        O phishing continua sendo uma ameaça significativa no mundo digital. Proteger-se requer atenção, ferramentas de segurança atualizadas e boas práticas ao interagir com mensagens e sites online. Ao reconhecer os sinais de phishing, você pode evitar ser uma vítima desse tipo de golpe.
+                    </p>
                 </div>
             </div>
             <Footer />
         </div>
     );
-}
+}    

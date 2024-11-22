@@ -81,9 +81,9 @@ export default function Home() {
                 <h1 className="text-2xl"><strong>Leia mais:</strong></h1>
                 {noticias.map((noticia) => (
                     <Link to={`/noticias/${noticia.link}`} key={noticia.id}>
-                        <div className="border p-6 rounded-lg shadow-lg max-w-5xl">
+                        <div className="border p-6 rounded-lg shadow-lg max-w-5xl mt-2 mb-8">
                             <img 
-                                src={noticia.imagem} 
+                                src={noticia.imagem}
                                 alt={noticia.titulo} 
                                 className="w-full h-64 object-cover rounded-t-lg mb-4"
                             />

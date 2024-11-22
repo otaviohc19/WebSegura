@@ -1,0 +1,7 @@
+[
+    { "id": 1, "nome": "Phishing" },
+    { "id": 2, "nome": "Roubo de Identidade" },
+    { "id": 3, "nome": "Fraude Financeira" },
+    { "id": 4, "nome": "Outros" }
+]
+  
