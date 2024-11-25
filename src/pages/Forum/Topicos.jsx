@@ -10,22 +10,39 @@ export default function Topico() {
     const [topico, setTopico] = useState(null);
     const [posts, setPosts] = useState([]);
     const [texto, setTexto] = useState('');
+    const [imagem, setImagem] = useState(null); // Estado para armazenar a imagem
 
     useEffect(() => {
-        axios.get(`/forum/${id}`)
+        // Carregar o tópico
+        axios.get(`http://localhost:3000/forum/${id}`)
             .then((response) => setTopico(response.data))
             .catch((error) => console.error(error));
 
-        axios.get(`/forum/${id}/posts`)
+        // Carregar os posts
+        axios.get(`http://localhost:3000/forum/${id}/posts`)
             .then((response) => setPosts(response.data))
             .catch((error) => console.error(error));
     }, [id]);
 
     const handlePost = () => {
-        axios.post(`/forum/${id}/posts`, { usuario_id: 1, texto }) // Simulação de usuário
+        const formData = new FormData();
+        formData.append('usuario_id', 1);  // Simulação de usuário
+        formData.append('texto', texto);  // Adiciona o texto ao FormData
+
+        // Se houver imagem, adiciona ao FormData
+        if (imagem) {
+            formData.append('imagem', imagem);
+        }
+
+        // Envia os dados para o backend
+        axios.post(`http://localhost:3000/forum/${id}/posts`, formData)
             .then(() => {
-                setTexto('');
-                axios.get(`/forum/${id}/posts`).then((response) => setPosts(response.data));
+                setTexto('');  // Limpa o campo de texto após o envio
+                setImagem(null);  // Limpa a imagem após o envio
+                // Recarrega os posts
+                axios.get(`http://localhost:3000/forum/${id}/posts`)
+                    .then((response) => setPosts(response.data))
+                    .catch((error) => console.error(error));
             })
             .catch((error) => console.error(error));
     };
@@ -40,16 +57,47 @@ export default function Topico() {
                     <p>Categoria: {topico.categoria}</p>
                 </div>
             )}
+
             <h2 className="text-xl font-semibold mt-4">Comentários</h2>
+
+            {/* Exibir posts */}
             {posts.map((post) => (
                 <div key={post.id} className="post">
                     <p>{post.texto}</p>
+                    {post.imagens && (
+                        <img
+                            src={`http://localhost:3000/uploads/${post.imagens}`}
+                            alt="Imagem do post"
+                            className="w-full mt-2"
+                        />
+                    )}
+                    <p className="text-sm text-gray-500">
+                        Postado por: {post.usuario_nome} em {new Date(post.data).toLocaleString()}
+                    </p>
                 </div>
             ))}
-            <textarea value={texto} onChange={(e) => setTexto(e.target.value)} className="w-full p-2 border rounded mt-4" />
-            <button onClick={handlePost} className="bg-blue-500 text-white py-2 px-4 mt-2 rounded">
-                Comentar
-            </button>
+
+            {/* Formulário para novo post */}
+            <div className="mt-4">
+                <textarea
+                    value={texto}
+                    onChange={(e) => setTexto(e.target.value)}
+                    className="w-full p-2 border rounded mt-4"
+                    placeholder="Escreva seu comentário..."
+                />
+                <input
+                    type="file"
+                    onChange={(e) => setImagem(e.target.files[0])}
+                    className="w-full p-2 border rounded mt-4"
+                />
+                <button
+                    onClick={handlePost}
+                    className="bg-blue-500 text-white py-2 px-4 mt-2 rounded"
+                >
+                    Comentar
+                </button>
+            </div>
+
             <Footer />
         </div>
     );

@@ -31,15 +31,25 @@ app.get('/', (req, res) => {
   res.send('Servidor funcionando');
 });
 
-// Endpoint para obter dados da tabela 'Golpes'
+// Endpoint para obter todos os golpes
 app.get('/golpes', async (req, res) => {
   try {
-    const [results] = await bd.query('SELECT * FROM Golpes');
-    console.log('Resultados do banco de dados:', results);
-    res.json(Array.isArray(results) ? results : [results]);
-  } catch (err) {
-    console.error('Erro ao consultar o banco de dados:', err);
-    res.status(500).json({ error: 'Erro ao acessar o banco de dados' });
+    const golpes = await bd.query('SELECT * FROM Golpes');
+    res.json(golpes);  // Retorna todos os golpes
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os golpes" });
+  }
+});
+
+// Endpoint para obter dados de um golpe específico (com id)
+app.get('/golpes/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [golpe] = await bd.query('SELECT * FROM Golpes WHERE id = ?', [id]);
+    if (!golpe) return res.status(404).json({ error: "Golpe não encontrado" });
+    res.json(golpe);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar o golpe" });
   }
 });
 
@@ -57,12 +67,10 @@ app.get('/categorias', (req, res) => {
   });
 });
 
-// Rota para registrar uma denúncia, agora vai para o fórum
 app.post('/denunciar', upload.single('imagem'), async (req, res) => {
   const { titulo, tipo, categoria, texto } = req.body; // Recebe os dados do formulário
   const imagem = req.file ? `/uploads/${req.file.filename}` : null; // Verifica se há imagem e retorna o caminho
 
-  const url = "google.com"; // Dados estáticos para o exemplo
   const data = new Date().toISOString().split('T')[0]; // Formato de data (YYYY-MM-DD)
   const status = "Em análise"; // Status inicial da denúncia
   const usuario = 1; // Usar o ID do usuário que fez a denúncia (exemplo está com id = 1)
@@ -75,27 +83,22 @@ app.post('/denunciar', upload.single('imagem'), async (req, res) => {
       return res.status(500).json({ msg: 'Categoria não encontrada' });
     }
 
-    // Insere a denúncia no banco de dados
+    // Insere a denúncia na tabela 'Golpes'
     let denuncia = await bd.query(
       `INSERT INTO Golpes
-      (titulo, descricao, metodo, url, data, status, usuario_id, categoria_id, contato_id, imagem)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [titulo, texto, tipo, url, data, status, usuario, categoriaExistente[0].id, contatos, imagem]
+      (titulo, descricao, metodo, data, status, usuario_id, categoria_id, imagem)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [titulo, texto, tipo, data, status, usuario, categoriaExistente[0].id, contatos, imagem]
     );
 
-    // Insere a denúncia como tópico no fórum
-    const topicoId = denuncia.insertId; // ID da denúncia inserida
-    await bd.query(
-      'INSERT INTO ftopicos (titulo, categoria_id, usuario_id, data) VALUES (?, ?, ?, ?)',
-      [titulo, categoriaExistente[0].id, usuario, data]
-    );
-
-    res.status(200).json({ msg: "Denúncia registrada no fórum com sucesso!" });
+    // Retorno de sucesso
+    res.status(200).json({ msg: "Denúncia registrada com sucesso!" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ msg: "Erro ao registrar a denúncia" });
   }
 });
+
 
 // Endpoint para obter os tópicos do fórum
 app.get('/forum', async (req, res) => {
@@ -103,7 +106,7 @@ app.get('/forum', async (req, res) => {
     const topicos = await bd.query('SELECT * FROM ftopicos');
     for (let topico of topicos) {
       // Buscar os comentários relacionados a esse tópico
-      topico.comentarios = await bd.query('SELECT * FROM fposts WHERE ftopico_id = ?', [topico.id]);
+      topico.comentarios = await bd.query('SELECT * FROM fposts WHERE golpes_id = ?', [topico.id]);
     }
     res.json(topicos);
   } catch (error) {
@@ -111,16 +114,39 @@ app.get('/forum', async (req, res) => {
   }
 });
 
-// Endpoint para retornar os comentários de um tópico
-app.get('/forum/:id/posts', async (req, res) => {
+// Endpoint para obter um tópico específico
+app.get('/forum/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const [posts] = await bd.query('SELECT * FROM fposts WHERE ftopico_id = ? ORDER BY data ASC', [id]);
-    res.status(200).json(posts);
+    const [topico] = await bd.query(`
+      SELECT f.id, f.titulo, f.texto, f.data, c.nome AS categoria 
+      FROM ftopicos f
+      JOIN categorias c ON f.categoria_id = c.id
+      WHERE f.id = ?`, [id]);
+    if (!topico) return res.status(404).json({ error: "Tópico não encontrado" });
+    res.json(topico);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao buscar posts', error });
+    res.status(500).json({ error: "Erro ao buscar o tópico" });
   }
 });
+
+// Endpoint para criar um post
+app.post('/forum/:id/posts', upload.single('imagem'), async (req, res) => {
+  const { id } = req.params;
+  const { usuario_id, texto } = req.body;
+  const imagem = req.file ? req.file.filename : null; // Se houver imagem, pega o nome do arquivo
+
+  try {
+    await bd.query(`
+      INSERT INTO fposts (ftopico_id, usuario_id, texto, imagens, data)
+      VALUES (?, ?, ?, ?, NOW())`, [id, usuario_id, texto, imagem]);
+
+    res.status(201).json({ message: "Post criado com sucesso" });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao criar o post" });
+  }
+});
+
 
 // Criar um novo comentário em um tópico
 app.post('/forum/:id/comentario', async (req, res) => {

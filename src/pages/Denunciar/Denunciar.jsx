@@ -64,6 +64,11 @@ export default function Denunciar() {
       return;
     }
 
+    if (isLoading) {
+      // Não enviar novamente enquanto já está carregando
+      return;
+    }
+
     setIsLoading(true); // Começa o carregamento
     const body = new FormData();
     body.append("titulo", titulo);

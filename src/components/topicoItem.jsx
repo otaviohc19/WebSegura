@@ -13,14 +13,15 @@ export default function TopicoItem({ topico }) {
                 {/* Exibindo as respostas, se houver */}
                 <h3 className="font-semibold text-gray-800">Respostas:</h3>
                 {topico.respostas && topico.respostas.length > 0 ? (
-                    topico.respostas.map((resposta, index) => (
-                        <div key={index} className="mt-4 p-4 border-t border-gray-200">
-                            <p className="text-md text-gray-700">{resposta.texto}</p>
-                        </div>
-                    ))
+                topico.respostas.map((resposta) => (
+                    <div key={resposta.id} className="mt-4 p-4 border-t border-gray-200">
+                        <p className="text-md text-gray-700">{resposta.texto}</p>
+                    </div>
+                ))
                 ) : (
-                    <p className="text-gray-500">Sem respostas ainda.</p>
+                <p className="text-gray-500">Sem respostas ainda.</p>
                 )}
+
             </div>
         </div>
     );
