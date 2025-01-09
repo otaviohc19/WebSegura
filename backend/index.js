@@ -18,10 +18,11 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
-const upload = multer({ storage: storage });
+
+const upload = multer({ storage });
 
 // Configura a pasta 'uploads' para ser acessível publicamente via URL
 app.use('/uploads', express.static('uploads'));
@@ -50,6 +51,24 @@ app.get('/golpes/:id', async (req, res) => {
     res.json(golpe);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar o golpe" });
+  }
+});
+
+// Rota para exibir os detalhes de uma denúncia
+app.get('/api/denuncias/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [denuncia] = await bd.query('SELECT * FROM Golpes WHERE id = ?', [id]);
+
+    if (!denuncia) {
+      return res.status(404).json({ error: 'Denúncia não encontrada' });
+    }
+
+    res.status(200).json(denuncia);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
@@ -88,7 +107,7 @@ app.post('/denunciar', upload.single('imagem'), async (req, res) => {
       `INSERT INTO Golpes
       (titulo, descricao, metodo, data, status, usuario_id, categoria_id, imagem)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [titulo, texto, tipo, data, status, usuario, categoriaExistente[0].id, contatos, imagem]
+      [titulo, texto, tipo, data, status, usuario, categoriaExistente[0].id, imagem]
     );
 
     // Retorno de sucesso
@@ -99,6 +118,23 @@ app.post('/denunciar', upload.single('imagem'), async (req, res) => {
   }
 });
 
+app.post('/golpes', upload.single('imagem'), async (req, res) => {
+  const { titulo, descricao, metodo, data, status, usuario_id, categoria_id } = req.body;
+  const imagem = req.file ? req.file.filename : null;
+
+  try {
+    // Insert into golpes table
+    await bd.query(
+      'INSERT INTO Golpes (titulo, descricao, metodo, data, status, usuario_id, categoria_id, imagem) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [titulo, descricao, metodo, data, status, usuario_id, categoria_id, imagem]
+    );
+
+    res.status(201).json({ message: 'Golpe created successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Endpoint para obter os tópicos do fórum
 app.get('/forum', async (req, res) => {
@@ -146,7 +182,6 @@ app.post('/forum/:id/posts', upload.single('imagem'), async (req, res) => {
     res.status(500).json({ error: "Erro ao criar o post" });
   }
 });
-
 
 // Criar um novo comentário em um tópico
 app.post('/forum/:id/comentario', async (req, res) => {
