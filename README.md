@@ -6,8 +6,8 @@ Seja bem-vindo ao **Web Segura**, uma plataforma dedicada à conscientização e
 ![CSS](https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Node.js](https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![React](https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![MySQL](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![React (Vite)](https://img.shields.io/badge/react%20with%20vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 
 ---
 
@@ -43,7 +43,7 @@ Seja bem-vindo ao **Web Segura**, uma plataforma dedicada à conscientização e
 
 1. Clone o repositório para o seu ambiente local:
    ```bash
-   git clone https://github.com/otaviohc19/WebSegura.git
+   git clone https://github.com/seu-usuario/web-segura.git
    ```
 
 2. Navegue até o diretório do projeto:
@@ -51,19 +51,30 @@ Seja bem-vindo ao **Web Segura**, uma plataforma dedicada à conscientização e
    cd web-segura
    ```
 
-3. Instale as dependências necessárias:
+3. Instale as dependências necessárias na raiz do projeto:
    ```bash
    npm install
    ```
 
-4. Configure o banco de dados MySQL utilizando o XAMPP:
+4. Navegue até o diretório do backend e instale as dependências:
+   ```bash
+   cd backend
+   npm install
+   ```
+
+5. Configure o banco de dados MySQL utilizando o XAMPP:
    - Inicie o Apache e MySQL no XAMPP.
    - Acesse o phpMyAdmin e crie um banco de dados chamado `web_segura`.
-   - Importe o arquivo `bd_site.sql` disponível na pasta raiz do projeto.
+   - Importe o arquivo `web_segura.sql` disponível na pasta `bd` do projeto.
 
-5. Inicie o servidor dentro da pasta /backend:
+6. Inicie o backend:
    ```bash
    npm start
+   ```
+
+7. Retorne à raiz do projeto e inicie o frontend:
+   ```bash
+   npm run dev
    ```
 
 ---
@@ -81,6 +92,13 @@ Seja bem-vindo ao **Web Segura**, uma plataforma dedicada à conscientização e
 
 4. **Consultar Conteúdos Informativos:**
    - Acesse a página de conteúdos para se informar sobre medidas de segurança digital.
+
+---
+
+## ⚡️ Tecnologias Utilizadas
+- **React com Vite**: Ferramenta moderna e ultrarrápida para desenvolvimento de frontends.
+- **Node.js**: Ambiente de execução JavaScript no lado do servidor.
+- **MySQL**: Banco de dados relacional para armazenamento de informações.
 
 ---
 
