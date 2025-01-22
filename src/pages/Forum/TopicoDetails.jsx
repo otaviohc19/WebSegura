@@ -51,24 +51,18 @@ export default function TopicoDetails() {
       const response = await fetch(`http://localhost:3000/forum/${golpeId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario_id: 1, texto: newComment }), // Example: fixed user ID
+        body: JSON.stringify({ usuario_id: 1, texto: newComment }),
       });
       if (!response.ok) throw new Error('Erro ao enviar o comentário');
       const createdComment = await response.json();
 
-      // Update the state immediately
-      setComments((prevComments) => [...prevComments, {
-        id: createdComment.insertId, // Assuming the backend returns the new comment ID
-        usuario: 1, // Example: fixed user ID
-        texto: newComment,
-      }]);
-      setNewComment('');
+      setNewComment(''); // Limpa o campo de texto
     } catch (error) {
+      console.error(error); // Log para debug
       setError('Erro ao enviar o comentário. Tente novamente.');
     }
   };
 
-  // Fetch golpe details and comments on component mount
   useEffect(() => {
     if (golpeId) {
       fetchGolpeDetails();
@@ -76,14 +70,15 @@ export default function TopicoDetails() {
     }
   }, [golpeId]);
 
-  // Listen for new comments via WebSocket
+  // Socket.io listener
   useEffect(() => {
     socket.on('new-comment', (newComment) => {
-      setComments((prevComments) => [...prevComments, {
-        id: newComment.id,
-        usuario: newComment.usuario_id,
-        texto: newComment.texto,
-      }]);
+      setComments((prevComments) => {
+        if (prevComments.some((comment) => comment.id === newComment.id)) {
+          return prevComments;
+        }
+        return [...prevComments, newComment];
+      });
     });
 
     return () => {
@@ -96,36 +91,36 @@ export default function TopicoDetails() {
       <Menu />
       <div className="flex flex-1">
         <MenuLateral />
-        <main className="flex-1 p-4 bg-white">
+        <main className="w-[90%] p-4 bg-white">
           {error && <div className="text-red-500 mb-4">{error}</div>}
 
-          {/* Golpe Details */}
           {golpeDetails ? (
             <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
               <h1 className="text-4xl font-bold text-blue-900 mb-4">{golpeDetails.titulo}</h1>
               <p className="text-lg mb-4">{golpeDetails.descricao}</p>
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold">Categoria:</h3>
-                <p>{golpeDetails.categoria}</p>
-              </div>
 
-              {/* Comments Section */}
               <div>
                 <h2 className="text-xl font-semibold mb-4">Comentários:</h2>
                 {isLoadingComments ? (
                   <p>Carregando comentários...</p>
-                ) : comments.length === 0 ? (
-                  <p>Não há comentários ainda.</p>
                 ) : (
-                  comments.map((comment) => (
-                    <div key={comment.id} className="p-4 bg-gray-100 rounded mb-4">
-                      <p>{comment.texto}</p>
-                    </div>
-                  ))
+                  <>
+                    {comments.length === 0 ? (
+                      <p>Não há comentários ainda. Adicione o primeiro comentário abaixo:</p>
+                    ) : (
+                      comments.map((comment) => (
+                        <div key={comment.id} className="p-4 bg-gray-100 rounded mb-4">
+                          <p>{comment.texto}</p>
+                          <small className="text-gray-500">
+                            Postado em: {new Date(comment.data).toLocaleString()}
+                          </small>
+                        </div>
+                      ))
+                    )}
+                  </>
                 )}
               </div>
 
-              {/* New Comment Form */}
               <form onSubmit={handleNewCommentSubmit}>
                 <textarea
                   className="w-full p-2 border border-gray-300 rounded mt-4"

@@ -11,13 +11,13 @@ import axios from "axios";
 export default function Denunciar() {
   const [titulo, setTitulo] = useState("");
   const [tipo, setTipo] = useState("");
-  const [categoria, setCategoria] = useState(""); // Categoria
-  const [categoriaId, setCategoriaId] = useState(""); // Estado para armazenar o ID da categoria
+  const [categoria, setCategoria] = useState("");
+  const [categoriaId, setCategoriaId] = useState("");
   const [texto, setTexto] = useState(EditorState.createEmpty());
   const [isMounted, setIsMounted] = useState(true);
-  const [isLoading, setIsLoading] = useState(false); // Estado para o carregamento
-  const [message, setMessage] = useState(""); // Mensagem de status
-  const [categorias, setCategorias] = useState([]); // Estado para armazenar as categorias
+  const [isLoading, setIsLoading] = useState(false); 
+  const [message, setMessage] = useState(""); 
+  const [categorias, setCategorias] = useState([]); 
 
   useEffect(() => {
     setIsMounted(true);
@@ -64,18 +64,17 @@ export default function Denunciar() {
     }
 
     setIsLoading(true); // Começa o carregamento
-    const body = new FormData();
-    body.append("titulo", titulo);
-    body.append("tipo", tipo);
-    body.append("categoria", categoriaId); // Enviar o ID da categoria
-    body.append("texto", draftToHtml(convertToRaw(texto.getCurrentContent())));
+
+    const body = {
+      titulo,
+      tipo,
+      categoria: categoriaId,
+      texto: draftToHtml(convertToRaw(texto.getCurrentContent()))
+    };
+
 
     try {
-      const response = await axios.post("http://localhost:3000/denunciar", body, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post("http://localhost:3000/denunciar", body);
       if (isMounted) {
         setMessage(response.data.msg || "Denúncia feita com sucesso!");
         console.log("Denúncia enviada");

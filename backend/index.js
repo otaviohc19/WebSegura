@@ -27,6 +27,11 @@ app.use(cors({
   allowedHeaders: ['Content-Type'],
 }));
 
+// Função para remover tags HTML de um texto
+function removeHtmlTags(text) {
+  return text.replace(/<\/?[^>]+(>|$)/g, '');
+}
+
 // Rotas
 app.get('/', (req, res) => {
   res.send('Servidor funcionando');
@@ -46,13 +51,48 @@ app.get('/golpes', async (req, res) => {
 app.get('/golpes/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const [golpe] = await bd.query('SELECT * FROM Golpes WHERE id = ?', [id]);
-    if (!golpe) return res.status(404).json({ error: 'Golpe não encontrado' });
+    // Busca o golpe
+    const [golpes] = await bd.query(`
+      SELECT 
+        id,
+        titulo,
+        descricao,
+        data,
+        usuario_id
+      FROM 
+        golpes
+      WHERE 
+        id = ?
+    `, [id]);
+
+    if (!golpes || golpes.length === 0) {
+      return res.status(404).json({ error: 'Golpe não encontrado' });
+    }
+
+    const golpe = golpes[0]; // Pega o primeiro item da lista
+
+    // Busca a categoria correspondente
+    const [categorias] = await bd.query(`
+      SELECT nome 
+      FROM categorias 
+      WHERE id = ?
+    `, [golpe.categoria_id]);
+
+    if (!categorias || categorias.length === 0) {
+      return res.status(404).json({ error: 'Categoria não encontrada' });
+    }
+
+    // Adiciona a categoria ao golpe
+    golpe.categoria = categorias[0].nome;
+
     res.json(golpe);
   } catch (error) {
+    console.error('Erro ao buscar o golpe:', error);
     res.status(500).json({ error: 'Erro ao buscar o golpe' });
   }
 });
+
+
 
 // Rota para exibir os detalhes de uma denúncia
 app.get('/api/denuncias/:id', async (req, res) => {
@@ -94,25 +134,23 @@ app.get('/categorias', (req, res) => {
 app.post('/denunciar', async (req, res) => {
   const { titulo, tipo, categoria, texto } = req.body;
   
-  console.log('Dados recebidos:', { titulo, tipo, categoria, texto });  // Log de depuração
-
   const data = new Date().toISOString().split('T')[0];
-  const status = "Em análise";
   const usuario = 1; // ID fixo de usuário (exemplo)
-  const contatos = 1; // Relacionar com algum contato do sistema
 
   try {
     const categoriaExistente = await bd.query('SELECT id FROM categorias WHERE id = ?', [categoria]);
-    console.log('Categoria encontrada:', categoriaExistente);  // Log de depuração
 
     if (categoriaExistente.length === 0) {
       return res.status(500).json({ msg: 'Categoria não encontrada' });
     }
 
+    // Remove as tags HTML do texto antes de salvar no banco
+    const textoLimpo = removeHtmlTags(texto);
+
     await bd.query(
-      `INSERT INTO Golpes (titulo, descricao, metodo, data, status, usuario_id, categoria_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [titulo, texto, tipo, data, status, usuario, categoriaExistente[0].id]
+      `INSERT INTO Golpes (titulo, descricao, data, usuario_id, categoria_id)
+       VALUES (?, ?, ?, ?, ?)`,
+      [titulo, textoLimpo, data, usuario, categoriaExistente[0].id]
     );
     
     res.status(200).json({ msg: 'Denúncia registrada com sucesso!' });
@@ -124,27 +162,32 @@ app.post('/denunciar', async (req, res) => {
 
 // Criar um novo comentário em um tópico
 app.post('/forum/:id/comments', async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // ID do tópico (golpe)
   const { usuario_id, texto } = req.body;
 
   try {
+    // Remove as tags HTML do texto do comentário
+    const textoLimpo = removeHtmlTags(texto);
+
     const result = await bd.query(
-      'INSERT INTO fposts (ftopico_id, usuario_id, texto, data) VALUES (?, ?, ?, NOW())',
-      [id, usuario_id, texto]
+      'INSERT INTO comentarios (golpe_id, usuario_id, texto, data) VALUES (?, ?, ?, NOW())',
+      [id, usuario_id, textoLimpo]
     );
 
     const newComment = {
-      id: result.insertId,
-      ftopico_id: id,
+      golpe_id: id,
       usuario_id,
-      texto,
+      texto: textoLimpo,
       data: new Date().toISOString(),
     };
 
+    // Emitir o novo comentário pelo socket.io
     io.emit('new-comment', newComment);
 
+    // Retornar resposta com sucesso
     res.status(201).json({ message: 'Comentário adicionado com sucesso', comentarioId: result.insertId });
   } catch (err) {
+    console.error(err); // Para ajudar no debug
     res.status(500).json({ error: 'Erro ao adicionar comentário' });
   }
 });
@@ -154,32 +197,34 @@ app.get('/forum/:id/comments', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const comments = await bd.query('SELECT * FROM fposts WHERE ftopico_id = ?', [id]);
+    const comments = await bd.query('SELECT * FROM comentarios WHERE golpe_id = ?', [id]);
 
-    if (comments.length === 0) {
-      return res.status(404).json({ error: 'Nenhum comentário encontrado' });
-    }
-
+    // Retornar uma lista vazia em vez de um erro 404
     res.status(200).json(comments);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Erro ao buscar comentários' });
   }
 });
 
-// Endpoint para exibir os detalhes do tópico do fórum
+// Rota para exibir os detalhes de um tópico
 app.get('/forum/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [topico] = await bd.query('SELECT * FROM ftopicos WHERE id = ?', [id]);
-    if (!topico) {
-      return res.status(404).json({ error: 'Tópico não encontrado' });
+    // Buscar o golpe pelo ID
+    const [golpe] = await bd.query('SELECT * FROM golpes WHERE id = ?', [id]);
+
+    // Se o golpe não for encontrado, redireciona para /forum
+    if (!golpe) {
+      return res.redirect('/forum');
     }
 
+    // Caso queira incluir os posts relacionados ao golpe
     const posts = await bd.query('SELECT * FROM fposts WHERE ftopico_id = ?', [id]);
-    topico.posts = posts;
+    golpe.posts = posts;
 
-    res.status(200).json(topico);
+    res.status(200).json(golpe);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar os detalhes do tópico' });
   }

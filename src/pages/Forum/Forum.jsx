@@ -74,9 +74,7 @@ export default function Forum() {
                   className="bg-white shadow-md rounded-lg p-6 border border-gray-200"
                 >
                   <h2 className="text-xl font-bold text-gray-800">{golpe.titulo}</h2>
-                  <p className="text-sm text-gray-600 mt-2">Categoria: {golpe.categoria}</p>
-                  <p className="text-sm text-gray-600 mt-1">Tipo: {golpe.metodo}</p>
-                  <p className="text-sm text-gray-600 mt-1">Status: {golpe.status}</p>
+                  <p className="text-sm text-gray-600 mt-2">Descrição: {golpe.descricao}</p>
                   <p className="text-sm text-gray-600 mt-1">Data: {new Date(golpe.data).toLocaleDateString()}</p>
                   <button
                     onClick={() => openModal(golpe)}
@@ -114,14 +112,6 @@ export default function Forum() {
             <div className="mt-4">
               <p><strong>Título:</strong> {selectedGolpe.titulo}</p>
               <p><strong>Descrição:</strong> {selectedGolpe.descricao}</p>
-              <p><strong>Categoria:</strong> {selectedGolpe.categoria}</p>
-              {/* Lista de comentários recentes */}
-              <div className="mt-4">
-                <h3 className="font-semibold text-lg">Últimos Comentários:</h3>
-                {selectedGolpe.comentarios && selectedGolpe.comentarios.slice(0, 3).map((comentario, index) => (
-                  <p key={index} className="text-sm text-gray-600 mt-2">{comentario.texto}</p>
-                ))}
-              </div>
               <button
                 onClick={() => goToTopicDetails(selectedGolpe.id)}
                 className="mt-4 text-blue-600 hover:underline"
