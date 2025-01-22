@@ -13,7 +13,6 @@ export default function Denunciar() {
   const [tipo, setTipo] = useState("");
   const [categoria, setCategoria] = useState(""); // Categoria
   const [categoriaId, setCategoriaId] = useState(""); // Estado para armazenar o ID da categoria
-  const [imagem, setImagem] = useState(null); // Estado para armazenar a imagem
   const [texto, setTexto] = useState(EditorState.createEmpty());
   const [isMounted, setIsMounted] = useState(true);
   const [isLoading, setIsLoading] = useState(false); // Estado para o carregamento
@@ -39,11 +38,6 @@ export default function Denunciar() {
 
     fetchCategorias();
   }, []);
-
-  // Função para lidar com o upload da imagem
-  function handleImagemChange(event) {
-    setImagem(event.target.files[0]);
-  }
 
   const handleCategoriaChange = (ev) => {
     const categoriaNome = ev.target.value;
@@ -75,10 +69,6 @@ export default function Denunciar() {
     body.append("tipo", tipo);
     body.append("categoria", categoriaId); // Enviar o ID da categoria
     body.append("texto", draftToHtml(convertToRaw(texto.getCurrentContent())));
-
-    if (imagem) {
-      body.append("imagem", imagem); // Envia a imagem
-    }
 
     try {
       const response = await axios.post("http://localhost:3000/denunciar", body, {
@@ -154,16 +144,6 @@ export default function Denunciar() {
                   </option>
                 ))}
               </select>
-            </div>
-
-            {/* Escolher Imagem */}
-            <div>
-              <label htmlFor="imagem" className="block text-lg font-medium text-gray-700">Escolha uma imagem para o golpe</label>
-              <input
-                type="file"
-                onChange={handleImagemChange}
-                className="mt-2 block w-full text-sm text-gray-700"
-              />
             </div>
 
             {/* Editor de Texto */}

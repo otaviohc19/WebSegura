@@ -2,10 +2,17 @@ import { useState, useEffect } from "react";
 import Footer from "../../components/footer";
 import Menu from "../../components/menu";
 import MenuLateral from "../../components/menuLateral";
+import Modal from "react-modal"; // Importe o Modal
+import { useNavigate } from 'react-router-dom'; // Use useNavigate ao invés de useHistory
+
+Modal.setAppElement('#root'); // Defina o elemento raiz para acessibilidade
 
 export default function Forum() {
   const [golpes, setGolpes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedGolpe, setSelectedGolpe] = useState(null); // Estado para o golpe selecionado
+  const navigate = useNavigate(); // Usando o hook useNavigate para redirecionamento
 
   useEffect(() => {
     // Busca todas as denúncias no backend
@@ -23,6 +30,26 @@ export default function Forum() {
 
     fetchGolpes();
   }, []);
+
+  const openModal = (golpe) => {
+    setSelectedGolpe(golpe); // Definir o golpe selecionado
+    setModalIsOpen(true); // Abrir o modal
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false); // Fechar o modal
+    setSelectedGolpe(null); // Limpar o golpe selecionado
+  };
+
+  const goToTopicDetails = (golpeId) => {
+    // Verifica se golpeId não é undefined ou null
+    if (golpeId) {
+      navigate(`/forum/${golpeId}`);
+    } else {
+      console.error("Golpe ID não encontrado");
+    }
+  };
+  
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -51,25 +78,60 @@ export default function Forum() {
                   <p className="text-sm text-gray-600 mt-1">Tipo: {golpe.metodo}</p>
                   <p className="text-sm text-gray-600 mt-1">Status: {golpe.status}</p>
                   <p className="text-sm text-gray-600 mt-1">Data: {new Date(golpe.data).toLocaleDateString()}</p>
-                  {golpe.imagem && (
-                    <img
-                      src={`http://localhost:3000${golpe.imagem}`}
-                      alt="Imagem do Golpe"
-                      className="mt-4 rounded-md"
-                    />
-                  )}
-                  <a
-                    href={`/forum/${golpe.id}`}
+                  <button
+                    onClick={() => openModal(golpe)}
                     className="mt-4 inline-block text-blue-600 hover:underline"
                   >
                     Ver detalhes
-                  </a>
+                  </button>
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Modal de Detalhes */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Detalhes do Golpe"
+        className="modal"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+        shouldCloseOnOverlayClick={true} // Permitir fechar o modal ao clicar na sobreposição
+        shouldCloseOnEsc={true} // Permitir fechar o modal com a tecla ESC
+      >
+        <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+          {/* X no canto superior direito */}
+          <button
+            onClick={closeModal}
+            className="absolute top-2 right-2 text-2xl text-gray-500 hover:text-gray-700"
+          >
+            &times;
+          </button>
+          <h2 className="text-xl font-bold text-gray-800">Detalhes do Golpe</h2>
+          {selectedGolpe && (
+            <div className="mt-4">
+              <p><strong>Título:</strong> {selectedGolpe.titulo}</p>
+              <p><strong>Descrição:</strong> {selectedGolpe.descricao}</p>
+              <p><strong>Categoria:</strong> {selectedGolpe.categoria}</p>
+              {/* Lista de comentários recentes */}
+              <div className="mt-4">
+                <h3 className="font-semibold text-lg">Últimos Comentários:</h3>
+                {selectedGolpe.comentarios && selectedGolpe.comentarios.slice(0, 3).map((comentario, index) => (
+                  <p key={index} className="text-sm text-gray-600 mt-2">{comentario.texto}</p>
+                ))}
+              </div>
+              <button
+                onClick={() => goToTopicDetails(selectedGolpe.id)}
+                className="mt-4 text-blue-600 hover:underline"
+              >
+                Ver mais detalhes e interagir
+              </button>
+            </div>
+          )}
+        </div>
+      </Modal>
 
       <Footer />
     </div>
